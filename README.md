@@ -5,7 +5,7 @@ MonteCarlo
 [![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/MonteCarlo/branch/main/graph/badge.svg)](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/MonteCarlo/branch/main)
 
 
-Monte Carlo related package
+Monte Carlo package created for PHYS 3684 at Virginia Tech
 
 ### Copyright
 
