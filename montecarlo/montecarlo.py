@@ -1,5 +1,3 @@
-"""Provide the primary functions."""
-
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -208,6 +206,11 @@ class IsingHamiltonian:
         """
         self.G = G
         self.bs = BitString(len(self.G))
+        self.weights = list()
+        for edge in self.G.edges:
+            self.weights.append(self.G.edges[edge]["weight"])
+        self.mu = list(np.full(len(self.G), 0))
+        self.N = len(self.G)
     
     def set_mu(self, mu):
         """
@@ -223,6 +226,7 @@ class IsingHamiltonian:
         None
         """
         self.mu = mu
+        self.N = len(mu)
         
     def energy(self, bs):
         """
@@ -239,18 +243,14 @@ class IsingHamiltonian:
             The energy of a given bitstring.
         """
         connection_matrix = nx.adjacency_matrix(self.G).todense()
-        weights = list()
         total_energy = 0
-                
-        for edge in self.G.edges:
-            weights.append(self.G.edges[edge]["weight"])
             
         for i in range(len(connection_matrix)):
             target_spin = bit_to_spin(bs[i])
             for j in range(i, len(connection_matrix)):
                 if connection_matrix[i][j]:
                     connected_spin = bit_to_spin(bs[j])
-                    total_energy += weights[i] * target_spin * connected_spin
+                    total_energy += self.weights[i+j-1] * target_spin * connected_spin
             total_energy -= self.mu[i] * target_spin
         
         return total_energy
@@ -438,19 +438,6 @@ def average_energy(bs, G, P_alpha, factor):
         AE += (energy(bs, G)**factor) * P_alpha[i]
         
     return AE
-
-def compute_average_values(bs:BitString, G: nx.Graph, T: float):
-    
-    P = probability(bs, G, T)             #Probabilities
-    E = average_energy(bs, G, P, 1)       #Average Energy
-    EE = average_energy(bs, G, P, 2)      #Average Square Energy
-    M = average_magnetization(bs, P, 1)   #Average Magnetization
-    MM = average_magnetization(bs, P, 2)  #Average Square Magnetization
-    
-    HC = (EE - E**2) * (T**-2)
-    MS = (MM - M**2) * (T**-1)
-    
-    return E, M, HC, MS
 
 def new_configuration(ih, bs_i, bs_j, T):
     e_i = ih.energy(bs_i)
