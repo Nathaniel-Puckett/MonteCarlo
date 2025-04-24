@@ -206,9 +206,6 @@ class IsingHamiltonian:
         """
         self.G = G
         self.bs = BitString(len(self.G))
-        self.weights = list()
-        for edge in self.G.edges:
-            self.weights.append(self.G.edges[edge]["weight"])
         self.mu = list(np.full(len(self.G), 0))
         self.N = len(self.G)
     
@@ -250,7 +247,7 @@ class IsingHamiltonian:
             for j in range(i, len(connection_matrix)):
                 if connection_matrix[i][j]:
                     connected_spin = bit_to_spin(bs[j])
-                    total_energy += self.weights[i+j-1] * target_spin * connected_spin
+                    total_energy += self.G.edges[(i, j)]["weight"] * target_spin * connected_spin
             total_energy -= self.mu[i] * target_spin
         
         return total_energy
@@ -383,18 +380,14 @@ def energy(bs: BitString, G: nx.Graph):
     - total_energy : The energy of a given state in graph G
     """
     connection_matrix = nx.adjacency_matrix(G).todense()
-    weights = list()
     total_energy = 0
-        
-    for edge in G.edges:
-        weights.append(G.edges[edge]["weight"])
         
     for i in range(len(connection_matrix)):
         target_spin = bit_to_spin(bs[i])
         for j in range(i, len(connection_matrix)):
             if connection_matrix[i][j]:
                 connected_spin = bit_to_spin(bs[j])
-                total_energy += weights[i] * target_spin * connected_spin
+                total_energy += G.edges[(i, j)]["weight"] * target_spin * connected_spin
     
     return total_energy
 
