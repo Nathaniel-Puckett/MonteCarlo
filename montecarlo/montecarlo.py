@@ -24,7 +24,7 @@ class BitString:
         -------
         None
         """
-        self.bits = np.zeros(bitstring_length, dtype = np.int64)
+        self.bits = np.zeros(bitstring_length)
 
     def __str__(self):
         """
