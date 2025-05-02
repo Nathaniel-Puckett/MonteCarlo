@@ -24,7 +24,7 @@ class BitString:
         -------
         None
         """
-        self.bits = np.zeros(bitstring_length)
+        self.bits = np.zeros(bitstring_length, dtype = np.int64)
 
     def __str__(self):
         """
@@ -151,11 +151,7 @@ class BitString:
         -------
         None
         """
-        target = self.bits[bit]
-        if target == 1:
-            self.bits[bit] = 0
-        elif target == 0:
-            self.bits[bit] = 1
+        self.bits[bit] = (self.bits[bit] + 1) % 2 
 
     def on(self):
         """
