@@ -353,27 +353,74 @@ class MonteCarlo:
         return energies, magnetizations
 
 def int_to_bin(num, bn_list):
+    """
+    Converts an integer to its binary representation
+    
+    Parameters
+    ----------
+    num : int
+        The integer to convert
+    bn_list : np.array
+        The bitstring to place the new binary string into
+    
+    Returns
+    -------
+    None
+    """
     for i in range(1, len(bn_list)+1):
         num, rem = divmod(num, 2)
         bn_list[-i] = rem
 
 def bin_to_int(bn_list):
+    """
+    Converts a bitstring to its integer representation
+    
+    Parameters
+    ----------
+    bn_list : np.array
+        The bitstring to convert to an integer
+    
+    Returns
+    -------
+    num : int
+        The integer representation of the bitstring
+    """
     num = 0
     for i in range(len(bn_list)):
         num += bn_list[-i-1] * (2**i)
     return num
 
 def bit_to_spin(bit):
+    """
+    Converts a bitstring to its integer representation
+    
+    Parameters
+    ----------
+    bit : int
+        The bit to convert to its corresponding spin value
+    
+    Returns
+    -------
+    +1/-1 : int
+        Corresponding spin, bit 0 is spin 1, bit 1 is spin -1
+    """
     return 1 if bit == 0 else -1 if bit == 1 else None
 
 def energy(bs: BitString, G: nx.Graph):
     """
     Gets the energy of a given bitstring in relation to connections on a graph
-    Parameters:
-    - bs : Input bitstring, will determine spin of each node on G
-    - G : Graph with connected nodes indicating interactions
-    Returns:
-    - total_energy : The energy of a given state in graph G
+    
+    Parameters
+    ----------
+    bs : BitString
+        Input bitstring, will determine spin of each node on G
+    G : networkx graph
+        Graph with connected nodes indicating interactions
+    
+    Returns
+    ----------
+    total_energy : float
+        The energy of a given state in graph G
     """
     connection_matrix = nx.adjacency_matrix(G).todense()
     total_energy = 0
@@ -388,7 +435,23 @@ def energy(bs: BitString, G: nx.Graph):
     return total_energy
 
 def probability(bs, G, T):
+    """
+    Gets the normalized probabilities for a every bitstring, graph, and temperature (k = 1)
     
+    Parameters
+    ----------
+    bs : BitString
+        Input bitstring
+    G : networkx graph
+        Graph with connected nodes indicating interactions
+    T : float
+        Temperature to calculate probabilities at
+    
+    Returns
+    -------
+    individual_probabilities / Z : list
+        The normalized probabilities for every bitstring
+    """
     individual_probabilites = list()
     Z = 0
     beta = (T)**-1
@@ -404,7 +467,23 @@ def probability(bs, G, T):
     return individual_probabilites / Z
 
 def average_magnetization(bs, P_alpha, factor):
+    """
+    Gets the average magnetization for all bitstring values
     
+    Parameters
+    ----------
+    bs : BitString
+        Input bitstring
+    P_alpha : list
+        List of probabilities
+    factor : float
+        Exponet of M in each given bitstring calculation
+    
+    Returns
+    -------
+    AM : float
+        The average magnetization
+    """
     AM = 0
     max_value = 2**len(bs)
     
@@ -418,7 +497,25 @@ def average_magnetization(bs, P_alpha, factor):
     return AM
 
 def average_energy(bs, G, P_alpha, factor):
+    """
+    Gets the average energy for all bitstring values
     
+    Parameters
+    ----------
+    bs : BitString
+        Input bitstring
+    G : networkx graph
+        Graph with connected nodes indicating interactions
+    P_alpha : list
+        List of probabilities
+    factor : float
+        Exponet of E in each given bitstring calculation
+    
+    Returns
+    -------
+    AE : float
+        The average energy
+    """
     AE = 0
     max_value = 2**len(bs)
     
@@ -429,6 +526,25 @@ def average_energy(bs, G, P_alpha, factor):
     return AE
 
 def new_configuration(ih, bs_i, bs_j, T):
+    """
+    Checks a proposed new bitstring configuration in metropolis sampling
+    
+    Parameters
+    ----------
+    ih : IsingHamiltonian
+        Ising Hamiltonian to use for calculations
+    bs_i : BitString
+        Starting bitstring
+    bs_j : BitString
+        Proposed bitstring
+    T : float
+        Temperature
+    
+    Returns
+    -------
+    bs_i/bs_j : BitString
+        The bitstring that was chosen, either stays at i or switches to j
+    """
     e_i = ih.energy(bs_i)
     e_j = ih.energy(bs_j)
     
